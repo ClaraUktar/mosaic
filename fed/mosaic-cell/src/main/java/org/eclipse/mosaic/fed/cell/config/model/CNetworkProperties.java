@@ -15,10 +15,10 @@
 
 package org.eclipse.mosaic.fed.cell.config.model;
 
-import org.eclipse.mosaic.fed.cell.config.gson.CapacityTypeAdapter;
 import org.eclipse.mosaic.lib.model.delay.Delay;
 import org.eclipse.mosaic.lib.model.gson.DelayTypeAdapterFactory;
 import org.eclipse.mosaic.lib.model.transmission.CTransmission;
+import org.eclipse.mosaic.lib.util.gson.DataFieldAdapter;
 
 import com.google.gson.annotations.JsonAdapter;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -29,7 +29,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  * In this context, uplink and downlink always refer to the direction TOWARDS
  * respectively FROM the GEO entity.
  */
-public class CNetworkProperties {
+public class CNetworkProperties implements Cloneable {
     public static final String GLOBAL_NETWORK_ID = "globalNetwork";
 
     /**
@@ -40,8 +40,8 @@ public class CNetworkProperties {
     /**
      * Up- and downlink module.
      */
-    public Uplink uplink;
-    public Downlink downlink;
+    public CUplink uplink;
+    public CDownlink downlink;
 
     /**
      * The uplink direction only allows point-to-point communication (unicast).
@@ -52,9 +52,9 @@ public class CNetworkProperties {
      *     <li/> Capacity
      * </ul>
      */
-    public static class Uplink {
+    public static class CUplink {
         /**
-         * The delay used by {@link Uplink}.
+         * The delay used by {@link CUplink}.
          */
         @JsonAdapter(DelayTypeAdapterFactory.class)
         public Delay delay;
@@ -65,7 +65,7 @@ public class CNetworkProperties {
         /**
          * Current capacity.
          */
-        @JsonAdapter(CapacityTypeAdapter.class)
+        @JsonAdapter(DataFieldAdapter.Bandwidth.class)
         public long capacity;
         /**
          * The maximal Capacity (when no transmission is ongoing).
@@ -80,26 +80,26 @@ public class CNetworkProperties {
      *     <li/> Point-to-multipoint communication (multicast)
      * </ul>
      */
-    public static class Downlink {
+    public static class CDownlink {
         /**
          * Point-to-point communication (unicast).
          */
-        public Unicast unicast;
+        public CUnicast unicast;
         /**
          * Point-to-multipoint communication (multicast).
          */
-        public Multicast multicast;
+        public CMulticast multicast;
         /**
          * Shared capacity between unicast and multicast.
          */
-        @JsonAdapter(CapacityTypeAdapter.class)
+        @JsonAdapter(DataFieldAdapter.Bandwidth.class)
         public long capacity;
         /**
          * The maximal Capacity (when no transmission is ongoing).
          */
         public transient long maxCapacity;
 
-        public static class Unicast {
+        public static class CUnicast {
             /**
              * Delay to be used by unicast.
              */
@@ -111,7 +111,7 @@ public class CNetworkProperties {
             public CTransmission transmission;
         }
 
-        public static class Multicast {
+        public static class CMulticast {
             /**
              * Delay to be used by multicast.
              */
